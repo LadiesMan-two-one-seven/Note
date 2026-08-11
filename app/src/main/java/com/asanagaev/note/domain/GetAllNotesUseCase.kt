@@ -2,9 +2,11 @@ package com.asanagaev.note.domain
 
 import kotlinx.coroutines.flow.Flow
 
-class GetAllNotesUseCase {
+class GetAllNotesUseCase(
+    private val repository: NotesRepository
+) {
 
     operator fun invoke(): Flow<List<Note>> {
-        TODO()
+        return repository.getAllNotes()
     }
 }
