@@ -1,15 +1,12 @@
 package com.asanagaev.note.presentation.screens.notes
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -28,7 +25,7 @@ fun NotesScreen(
     val state by viewModel.state.collectAsState()
 
     LazyColumn(
-        modifier = Modifier
+        modifier = modifier
             .padding(top = 48.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
@@ -38,16 +35,8 @@ fun NotesScreen(
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                items(state.pinnedNotes) {note ->
-                    NotesCard(
-                        note = note,
-                        onNoteClick = {
-                            viewModel.processCommand(NotesCommand.SwitchPinnedStatus(note.id))
-                        }
-                    )
-                }
 //                state.pinnedNotes.forEach { note ->
-//                    item {
+//                    item(key = note.id) {
 //                        NotesCard(
 //                            note = note,
 //                            onNoteClick = {
@@ -56,19 +45,21 @@ fun NotesScreen(
 //                        )
 //                    }
 //                }
+                items(
+                    items = state.pinnedNotes,
+                    key = { it.id }
+                ) {note ->
+                    NotesCard(
+                        note = note,
+                        onNoteClick = {
+                            viewModel.processCommand(NotesCommand.SwitchPinnedStatus(note.id))
+                        }
+                    )
+                }
             }
         }
-        items(state.otherNotes) {note ->
-            NotesCard(
-                note = note,
-                onNoteClick = {
-                    viewModel.processCommand(NotesCommand.SwitchPinnedStatus(note.id))
-                }
-            )
-        }
-
 //        state.otherNotes.forEach { note ->
-//            item {
+//            item(key = note.id) {
 //                NotesCard(
 //                    note = note,
 //                    onNoteClick = {
@@ -77,6 +68,17 @@ fun NotesScreen(
 //                )
 //            }
 //        }
+        items(
+            items = state.otherNotes,
+            key = { it.id }
+        ) {note ->
+            NotesCard(
+                note = note,
+                onNoteClick = {
+                    viewModel.processCommand(NotesCommand.SwitchPinnedStatus(note.id))
+                }
+            )
+        }
     }
 }
 
@@ -87,7 +89,7 @@ fun NotesCard(
     onNoteClick: (Note) -> Unit
 ) {
     Text(
-        modifier = Modifier
+        modifier = modifier
             .clickable {
                 onNoteClick(note)
             },
