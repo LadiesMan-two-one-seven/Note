@@ -14,37 +14,37 @@ class CreateNoteViewModel : ViewModel() {
     private val repository = TestNotesRepositoryImpl
     private val addNoteUseCase = AddNoteUseCase(repository)
 
-    private val _state = MutableStateFlow<CreateNoteState>(CreateNoteState.Creation())
+    private val _state = MutableStateFlow<EditNoteState>(EditNoteState.Creation())
     val state = _state.asStateFlow()
 
     fun processCommand(command: CreateNoteCommand) {
         when (command) {
             CreateNoteCommand.Back -> {
-                _state.update { CreateNoteState.Finished }
+                _state.update { EditNoteState.Finished }
             }
 
             is CreateNoteCommand.InputContent -> {
                 _state.update { previousState ->
-                    if (previousState is CreateNoteState.Creation) {
+                    if (previousState is EditNoteState.Creation) {
                         previousState.copy(
                             content = command.content,
                             isSaveEnable = previousState.title.isNotBlank() && command.content.isNotBlank()
                         )
                     } else {
-                        CreateNoteState.Creation(content = command.content)
+                        EditNoteState.Creation(content = command.content)
                     }
                 }
             }
 
             is CreateNoteCommand.InputTitle -> {
                 _state.update { previousState ->
-                    if (previousState is CreateNoteState.Creation) {
+                    if (previousState is EditNoteState.Creation) {
                         previousState.copy(
                             title = command.title,
                             isSaveEnable = command.title.isNotBlank() && previousState.title.isNotBlank()
                         )
                     } else {
-                        CreateNoteState.Creation(title = command.title)
+                        EditNoteState.Creation(title = command.title)
                     }
                 }
             }
@@ -52,11 +52,11 @@ class CreateNoteViewModel : ViewModel() {
             CreateNoteCommand.Save -> {
                 viewModelScope.launch {
                     _state.update { previousState ->
-                        if (previousState is CreateNoteState.Creation) {
+                        if (previousState is EditNoteState.Creation) {
                             val title = previousState.title
                             val content = previousState.content
                             addNoteUseCase(title, content)
-                            CreateNoteState.Finished
+                            EditNoteState.Finished
                         } else {
                             previousState
                         }
@@ -78,13 +78,13 @@ sealed interface CreateNoteCommand {
     data object Back : CreateNoteCommand
 }
 
-sealed interface CreateNoteState {
+sealed interface EditNoteState {
 
     data class Creation(
         val title: String = "",
         val content: String = "",
         val isSaveEnable: Boolean = false
-    ) : CreateNoteState
+    ) : EditNoteState
 
-    data object Finished : CreateNoteState
+    data object Finished : EditNoteState
 }
