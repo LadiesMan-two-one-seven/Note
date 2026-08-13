@@ -21,6 +21,8 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -34,7 +36,8 @@ import com.asanagaev.note.presentation.utils.DateFormatter
 @Composable
 fun CreateNoteScreen(
     modifier: Modifier = Modifier,
-    viewModel: CreateNoteViewModel = viewModel()
+    viewModel: CreateNoteViewModel = viewModel(),
+    onFinished: () -> Unit
 ) {
 
     val state = viewModel.state.collectAsState()
@@ -163,7 +166,10 @@ fun CreateNoteScreen(
         }
 
         CreateNoteState.Finished -> {
-
+//            SideEffect {  }
+            LaunchedEffect(key1 = Unit) {
+                onFinished()
+            }
         }
     }
 }
