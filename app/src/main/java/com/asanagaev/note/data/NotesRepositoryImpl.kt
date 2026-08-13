@@ -6,7 +6,7 @@ import com.asanagaev.note.domain.NotesRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-class NotesRepositoryImpl private constructor(context: Context): NotesRepository {
+class NotesRepositoryImpl private constructor(context: Context) : NotesRepository {
 
     private val notesDataBase = NotesDatabase.getInstance(context)
     private val notesDao = notesDataBase.notesDao()

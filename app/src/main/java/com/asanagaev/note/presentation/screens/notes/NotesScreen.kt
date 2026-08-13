@@ -1,5 +1,6 @@
 package com.asanagaev.note.presentation.screens.notes
 
+import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.combinedClickable
@@ -47,12 +48,14 @@ import com.asanagaev.note.presentation.utils.DateFormatter
 @Composable
 fun NotesScreen(
     modifier: Modifier = Modifier,
-    viewModel: NoteViewModel = viewModel(),
+    context: Context = LocalContext.current.applicationContext,
+    viewModel: NoteViewModel = viewModel {
+        NoteViewModel(context)
+    },
     onNoteClick: (Note) -> Unit,
     onAddNoteClick: () -> Unit
 ) {
 
-    // LocalContext.current.applicationContext
     val state by viewModel.state.collectAsState()
 
     Scaffold(
@@ -168,7 +171,7 @@ fun NotesScreen(
 @Composable
 private fun Title(
     modifier: Modifier = Modifier,
-    text: String,
+    text: String
 ) {
     Text(
         modifier = modifier,
