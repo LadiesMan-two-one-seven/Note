@@ -1,6 +1,5 @@
 package com.asanagaev.note.domain
 
-
 data class Note(
     val id: Int,
     val title: String,
