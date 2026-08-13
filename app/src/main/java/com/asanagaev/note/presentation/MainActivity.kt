@@ -14,14 +14,16 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             NoteTheme {
-                NotesScreen()
+                NotesScreen(
+                    onNoteClick = {
+                        Log.d("MainActivity", "onNoteClick: $it")
+                    },
+                    onAddNoteClick = {
+                        Log.d("MainActivity", "onAddNoteClick")
+                    }
+                )
             }
         }
 
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        Log.d("MainActivity", "onDestroy")
     }
 }
