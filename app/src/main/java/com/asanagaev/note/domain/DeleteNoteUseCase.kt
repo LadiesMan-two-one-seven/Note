@@ -1,6 +1,8 @@
 package com.asanagaev.note.domain
 
-class DeleteNoteUseCase(
+import javax.inject.Inject
+
+class DeleteNoteUseCase @Inject constructor(
     private val repository: NotesRepository
 ) {
 
