@@ -1,6 +1,7 @@
 package com.asanagaev.note.di
 
 import android.content.Context
+import androidx.room.Room
 import com.asanagaev.note.data.NotesDao
 import com.asanagaev.note.data.NotesDatabase
 import com.asanagaev.note.data.NotesRepositoryImpl
@@ -30,7 +31,11 @@ interface DataModule {
         fun provideNotesDatabase(
             @ApplicationContext context: Context
         ): NotesDatabase {
-            return NotesDatabase.getInstance(context)
+            return Room.databaseBuilder(
+                context = context,
+                klass = NotesDatabase::class.java,
+                name = "notes.db"
+            ).build()
         }
 
         @Singleton
