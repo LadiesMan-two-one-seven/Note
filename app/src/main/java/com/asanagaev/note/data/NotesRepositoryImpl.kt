@@ -1,5 +1,6 @@
 package com.asanagaev.note.data
 
+import com.asanagaev.note.domain.ContentItem
 import com.asanagaev.note.domain.Note
 import com.asanagaev.note.domain.NotesRepository
 import kotlinx.coroutines.flow.Flow
@@ -12,11 +13,12 @@ class NotesRepositoryImpl @Inject constructor(
 
     override suspend fun addNote(
         title: String,
-        content: String,
+        content: List<ContentItem>,
         isPinned: Boolean,
         updatedAt: Long
     ) {
-        val noteDbModel = NoteDbModel(0, title, content, updatedAt, isPinned)
+        val note = Note(0, title, content, updatedAt, isPinned)
+        val noteDbModel = note.toDBModel()
         notesDao.addNote(noteDbModel)
     }
 

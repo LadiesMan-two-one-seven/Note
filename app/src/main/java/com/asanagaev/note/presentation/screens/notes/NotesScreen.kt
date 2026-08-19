@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.asanagaev.note.R
+import com.asanagaev.note.domain.ContentItem
 import com.asanagaev.note.domain.Note
 import com.asanagaev.note.presentation.ui.theme.OtherNotesColors
 import com.asanagaev.note.presentation.ui.theme.PinnedNotesColors
@@ -93,13 +94,11 @@ fun NotesScreen(
             item {
                 Spacer(modifier = Modifier.height(24.dp))
             }
-            if (state.pinnedNotes.isNotEmpty()) {
-                item {
-                    Subtitle(
-                        modifier = Modifier.padding(horizontal = 24.dp),
-                        text = "Pinned"
-                    )
-                }
+            item {
+                Subtitle(
+                    modifier = Modifier.padding(horizontal = 24.dp),
+                    text = "Pinned"
+                )
             }
             item {
                 Spacer(modifier = Modifier.height(16.dp))
@@ -131,13 +130,11 @@ fun NotesScreen(
             item {
                 Spacer(modifier = Modifier.height(24.dp))
             }
-            if (state.otherNotes.isNotEmpty()) {
-                item {
-                    Subtitle(
-                        modifier = Modifier.padding(horizontal = 24.dp),
-                        text = "Others"
-                    )
-                }
+            item {
+                Subtitle(
+                    modifier = Modifier.padding(horizontal = 24.dp),
+                    text = "Others"
+                )
             }
             item {
                 Spacer(modifier = Modifier.height(16.dp))
@@ -268,13 +265,18 @@ fun NoteCard(
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
         Spacer(modifier = Modifier.height(24.dp))
-        Text(
-            text = note.content,
-            fontSize = 16.sp,
-            maxLines = 3,
-            color = MaterialTheme.colorScheme.onSurface,
-            fontWeight = FontWeight.Medium,
-            overflow = TextOverflow.Ellipsis
-        )
+        note.content
+            .filterIsInstance<ContentItem.Text>()
+            .joinToString("\n") { it.content }
+            .let {
+                Text(
+                    text = it,
+                    fontSize = 16.sp,
+                    maxLines = 3,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    fontWeight = FontWeight.Medium,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
     }
 }
