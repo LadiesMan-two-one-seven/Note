@@ -2,13 +2,13 @@
 
 package com.asanagaev.note.presentation.screens.creation
 
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -33,6 +33,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.asanagaev.note.domain.ContentItem
 import com.asanagaev.note.presentation.ui.theme.CustomIcons
 import com.asanagaev.note.presentation.utils.DateFormatter
 
@@ -47,13 +48,15 @@ fun CreateNoteScreen(
 
     val imagePicker = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent(),
-        onResult = {
-            Log.d("CreateNoteScreen", it.toString())
+        onResult = { uri ->
+            uri?.let {
+                viewModel.processCommand(CreateNoteCommand.AddImage(it))
+            }
         }
     )
 
     when (val currentState = state.value) {
-        is EditNoteState.Creation -> {
+        is CreateNoteState.Creation -> {
             Scaffold(
                 modifier = modifier,
                 topBar = {
@@ -135,33 +138,37 @@ fun CreateNoteScreen(
                         fontSize = 12.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
-                    TextField(
+                    LazyColumn(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 8.dp)
-                            .weight(1f),
-                        value = currentState.content,
-                        onValueChange = {
-                            viewModel.processCommand(CreateNoteCommand.InputContent(it))
-                        },
-                        colors = TextFieldDefaults.colors(
-                            focusedContainerColor = Color.Transparent,
-                            unfocusedContainerColor = Color.Transparent,
-                            focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent
-                        ),
-                        textStyle = TextStyle(
-                            fontSize = 16.sp,
-                            color = MaterialTheme.colorScheme.onSurface
-                        ),
-                        placeholder = {
-                            Text(
-                                text = "Note something down",
-                                fontSize = 16.sp,
-                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f),
-                            )
+                            .weight(1f)
+                    ) {
+                        currentState.content.forEachIndexed { index, contentItem ->
+                            item(key = index) {
+                                when (contentItem) {
+                                    is ContentItem.Image -> {
+                                        TextContent(
+                                            text = contentItem.url,
+                                            onTextChanged = {}
+                                        )
+                                    }
+                                    is ContentItem.Text -> {
+                                        TextContent(
+                                            text = contentItem.content,
+                                            onTextChanged = {
+                                                viewModel.processCommand(
+                                                    CreateNoteCommand
+                                                        .InputContent(
+                                                            content = it,
+                                                            index = index
+                                                        )
+                                                )
+                                            }
+                                        )
+                                    }
+                                }
+                            }
                         }
-                    )
+                    }
                     Button(
                         modifier = Modifier
                             .padding(horizontal = 24.dp)
@@ -170,7 +177,7 @@ fun CreateNoteScreen(
                             viewModel.processCommand(CreateNoteCommand.Save)
                         },
                         shape = RoundedCornerShape(10.dp),
-                        enabled = currentState.isSaveEnable,
+                        enabled = currentState.isSaveEnabled,
                         colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.primary,
                             disabledContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
@@ -186,10 +193,42 @@ fun CreateNoteScreen(
             }
         }
 
-        EditNoteState.Finished -> {
+        CreateNoteState.Finished -> {
             LaunchedEffect(key1 = Unit) {
                 onFinished()
             }
         }
     }
+}
+
+@Composable
+private fun TextContent(
+    modifier: Modifier = Modifier,
+    text: String,
+    onTextChanged: (String) -> Unit
+) {
+    TextField(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 8.dp),
+        value = text,
+        onValueChange = onTextChanged,
+        colors = TextFieldDefaults.colors(
+            focusedContainerColor = Color.Transparent,
+            unfocusedContainerColor = Color.Transparent,
+            focusedIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent
+        ),
+        textStyle = TextStyle(
+            fontSize = 16.sp,
+            color = MaterialTheme.colorScheme.onSurface
+        ),
+        placeholder = {
+            Text(
+                text = "Note something down",
+                fontSize = 16.sp,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f),
+            )
+        }
+    )
 }
