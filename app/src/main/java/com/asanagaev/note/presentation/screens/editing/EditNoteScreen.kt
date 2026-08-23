@@ -2,6 +2,8 @@
 
 package com.asanagaev.note.presentation.screens.editing
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -31,8 +33,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import com.asanagaev.note.domain.ContentItem
-import com.asanagaev.note.presentation.screens.editing.EditNoteCommand.*
+import com.asanagaev.note.presentation.screens.editing.EditNoteCommand.DeleteImage
+import com.asanagaev.note.presentation.screens.editing.EditNoteCommand.InputContent
+import com.asanagaev.note.presentation.screens.editing.EditNoteCommand.Delete
+import com.asanagaev.note.presentation.screens.editing.EditNoteCommand.AddImage
+import com.asanagaev.note.presentation.screens.editing.EditNoteCommand.Save
+import com.asanagaev.note.presentation.screens.editing.EditNoteCommand.InputTitle
+import com.asanagaev.note.presentation.screens.editing.EditNoteCommand.Back
+import com.asanagaev.note.presentation.ui.theme.Content
+import com.asanagaev.note.presentation.ui.theme.CustomIcons
 import com.asanagaev.note.presentation.utils.DateFormatter
 
 @Composable
@@ -48,6 +57,16 @@ fun EditNoteScreen(
 ) {
 
     val state = viewModel.state.collectAsState()
+
+    val imagePicker = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent(),
+        onResult = { uri ->
+            uri?.let {
+                viewModel.processCommand(AddImage(it.toString()))
+            }
+        }
+    )
+
     when (val currentState = state.value) {
         is EditNoteState.Editing -> {
             Scaffold(
@@ -70,12 +89,22 @@ fun EditNoteScreen(
                         actions = {
                             Icon(
                                 modifier = Modifier
-                                    .padding(end = 8.dp)
+                                    .padding(end = 24.dp)
                                     .clickable {
                                         viewModel.processCommand(Delete)
                                     },
                                 imageVector = Icons.Outlined.Delete,
                                 contentDescription = "Delete note"
+                            )
+                            Icon(
+                                modifier = Modifier
+                                    .clickable {
+                                        imagePicker.launch("image/*")
+                                    }
+                                    .padding(end = 16.dp),
+                                imageVector = CustomIcons.AddPhoto,
+                                contentDescription = "Add photo from gallery",
+                                tint = MaterialTheme.colorScheme.onSurface
                             )
                         },
                         navigationIcon = {
@@ -131,16 +160,17 @@ fun EditNoteScreen(
                         fontSize = 12.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
-                    currentState.note.content.filterIsInstance<ContentItem.Text>()
-                        .forEach { contentItemText ->
-                            TextContent(
-                                modifier = Modifier.weight(1f),
-                                text = contentItemText.content,
-                                onTextChanged = {
-                                    viewModel.processCommand(InputContent(it))
-                                }
-                            )
+                    Content(
+                        modifier = Modifier
+                            .weight(1f),
+                        content = currentState.note.content,
+                        onTextChanged = { index, text ->
+                            viewModel.processCommand(InputContent(text, index))
+                        },
+                        onDeleteImageClick = {
+                            viewModel.processCommand(DeleteImage(index = it))
                         }
+                    )
                     Button(
                         modifier = Modifier
                             .padding(horizontal = 24.dp)
