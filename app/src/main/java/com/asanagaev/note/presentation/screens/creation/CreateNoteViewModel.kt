@@ -5,7 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.asanagaev.note.domain.AddNoteUseCase
 import com.asanagaev.note.domain.ContentItem
-import com.asanagaev.note.domain.ContentItem.*
+import com.asanagaev.note.domain.ContentItem.Image
+import com.asanagaev.note.domain.ContentItem.Text
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
