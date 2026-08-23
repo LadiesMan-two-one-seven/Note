@@ -43,10 +43,12 @@ object DateFormatter {
                 val minutes = TimeUnit.MILLISECONDS.toMinutes(diff)
                 stringResource(R.string.minutes_ago, minutes)
             }
+
             diff < millisInDay -> {
                 val hours = TimeUnit.MILLISECONDS.toHours(diff)
                 stringResource(R.string.hours_ago, hours)
             }
+
             else -> {
                 formatter.format(timestamp)
             }
