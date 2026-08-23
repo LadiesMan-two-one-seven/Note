@@ -93,8 +93,8 @@ sealed class Screen(val route: String) {
 
     data object EditNote : Screen("edit_note/{note_id}") { // Bundle("note_id" - "5")
 
-        fun createRoute(noteId: Int): String { // edit_note/5
-            return "edit_note/$noteId" // "$route/%noteId"
+        fun createRoute(noteId: Int): String {
+            return "edit_note/$noteId"
         }
 
         fun getNoteId(arguments: Bundle?): Int {

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Заметки</string>
+    <string name="search">Поиск…</string>
+    <string name="pinned">Закреплённые</string>
+    <string name="all_notes">Все заметки</string>
+    <string name="others">Другие</string>
+    <string name="search_notes">Поиск заметок</string>
+    <string name="image_from_gallery">Изображение из галереи</string>
+    <string name="remove_image">Убрать изображение</string>
+    <string name="note_something_down">Напишите что-нибудь</string>
+    <string name="button_add_note">Кнопка добавления заметки</string>
+    <string name="first_image_from_gallery">Первое изображение из галереи</string>
+    <string name="edit_note">Редактировать заметку</string>
+    <string name="save_note">Сохнарить заметку</string>
+    <string name="title">Заголовок</string>
+    <string name="back">Назад</string>
+    <string name="add_photo_from_gallery">Добавить фото из галереи</string>
+    <string name="delete_note">Удалить заметку</string>
+    <string name="create_note">Создать заметку</string>
+    <string name="just_now">Только что</string>
+    <string name="hours_ago">%1$d часов назад</string>
+    <string name="minutes_ago">%1$d минут назад</string>
+</resources>
