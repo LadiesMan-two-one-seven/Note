@@ -22,7 +22,7 @@ interface NotesDao {
         OR content LIKE '%' || :query || '%' 
         ORDER BY updatedAt DESC
         """)
-    fun searchNotes(query: String): Flow<List<NoteDbModel>>
+    fun searchNotes(query: String): Flow<List<NoteWithContentDbModel>>
 
     @Query("DELETE FROM notes WHERE id == :noteId")
     suspend fun deleteNote(noteId: Int)
@@ -31,7 +31,7 @@ interface NotesDao {
     suspend fun switchPinnedStatus(noteId: Int)
 
     @Insert(onConflict = REPLACE)
-    suspend fun addNote(noteDbModel: NoteDbModel)
+    suspend fun addNote(noteDbModel: NoteDbModel): Long
 
     @Insert(onConflict = REPLACE)
     suspend fun addNoteContent(content: List<ContentItemDbModel>)
